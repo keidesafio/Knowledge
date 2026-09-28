@@ -1,16 +1,16 @@
 20260304_ChatGPTやClaudeが使えなくなったらどうしますか？ローカルLLMを覗いてみよう！
 引用元
-Qwen3.5-9B - ハグフェイス
-オラマ公式サイト
-オラマウェブ検索
-クロードのステータスページ
-OpenAIステータスページ
-Ollama API ドキュメント
-VentureBeat：アリババのQwen3.5-9BがGPT-OSS-120Bを上回る
-Qwen3.5-35B-A3B - ハグフェイス
-人工分析: Qwen3.5-35B-A3B
-VentureBeat：アリババのQwen3.5-MediumモデルはSonnet 4.5と同等の性能を提供
-Qwen3.5-9B-GGUF - ハグフェイス（アンスロス）
+https://huggingface.co/Qwen/Qwen3.5-9B
+https://ollama.com/
+https://ollama.com/blog/web-search
+https://status.claude.com/
+https://status.openai.com/
+https://github.com/ollama/ollama/blob/main/docs/api.md
+https://venturebeat.com/technology/alibabas-small-open-source-qwen3-5-9b-beats-openais-gpt-oss-120b-and-can-run
+https://huggingface.co/Qwen/Qwen3.5-35B-A3B
+https://artificialanalysis.ai/models/qwen3-5-35b-a3b
+https://venturebeat.com/ai/alibabas-new-open-source-qwen3-5-medium-models-offer-sonnet-4-5-performance/
+https://huggingface.co/unsloth/Qwen3.5-9B-GGUF
 小型で知能がギュっと決められている？Qwen3.5 9Bをローカルで試してみよう！ 
 この記事では、Alibaba Cloudが公開した高性能小型AIモデル「Qwen3.5-9B」を、自分のPCにインストールして動かすまでの手順を解説します。
 
