@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>16GB・GPUなしから考える ローカルLLM導入ガイド｜日常の開発業務版</title>
+<style>
+:root{--bg:#f5f6f2;--ink:#193831;--muted:#586b65;--green:#167354;--line:#d8e2d9;--pale:#e8f1e8;--amber:#946229}*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:78px}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.85 system-ui,"Segoe UI","Yu Gothic",sans-serif}a{color:#086c54;text-underline-offset:3px}a:hover{color:#b15b25}p{margin:10px 0 16px}h1,h2,h3{line-height:1.4}h2{font-size:29px;margin:5px 0 15px}h3{font-size:20px;margin:5px 0 12px}strong{font-weight:750}.wrap{max-width:1160px;margin:auto;padding:0 32px}.hero{background:#153e32;color:#fff;padding:64px 0 52px}.hero h1{font-size:clamp(30px,4.5vw,54px);letter-spacing:-.045em;margin:15px 0 22px}.hero p{max-width:870px;color:#d9e8de}.eyebrow,.kicker{font-size:12px;letter-spacing:.13em;font-weight:800;color:#a9d8b5}.meta{font-size:13px;color:#b9d6c2}.route{display:flex;gap:9px;flex-wrap:wrap;margin-top:30px}.route span{border:1px solid #668e77;border-radius:7px;padding:7px 14px;font-size:13px}nav{position:sticky;top:0;z-index:5;background:#fffffff2;border-bottom:1px solid var(--line);backdrop-filter:blur(8px)}nav .wrap{display:flex;gap:22px;align-items:center;overflow:auto;padding-top:12px;padding-bottom:12px;white-space:nowrap;font-size:13px}nav a{text-decoration:none}button{border:1px solid var(--line);border-radius:5px;padding:5px 12px;background:white;color:var(--ink);cursor:pointer}main section{padding-top:55px}.kicker{color:var(--green)}.intro{max-width:900px;color:var(--muted)}.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.three{grid-template-columns:repeat(3,1fr)}.card{background:white;border:1px solid var(--line);border-radius:13px;padding:23px}.card p:last-child{margin-bottom:0}.muted,small{color:var(--muted)}small{display:block;font-size:12px;line-height:1.7;margin-top:5px}.note{background:#fff7e9;border-left:4px solid #cf9b57;border-radius:0 8px 8px 0;padding:16px 20px;font-size:14px;margin:20px 0}.soft{background:var(--pale);padding:20px 24px;border-radius:10px;margin:18px 0}.table{overflow:auto;border:1px solid var(--line);border-radius:12px;background:white}table{width:100%;border-collapse:collapse;font-size:14px;min-width:840px}th,td{text-align:left;vertical-align:top;padding:15px 17px;border-bottom:1px solid var(--line)}th{background:#e7efe6;font-size:12px}tr:last-child td{border-bottom:0}td:first-child{font-weight:700;width:17%}td ul{padding-left:17px;margin:0}.tag{display:inline-block;border-radius:20px;padding:2px 10px;font-size:11px;font-weight:750;background:#e3eee5;color:#216747;margin-bottom:9px}.tag.idea{background:#e9edf8;color:#495d91}.tag.warn{background:#fff0d8;color:#865d26}.big{font-size:31px;line-height:1.3;font-weight:800;color:var(--green)}.ref{font-size:12px;white-space:nowrap}.pick{border-top:5px solid var(--green)}.pick code{font-size:16px;word-break:break-all}.recommend{background:#163f33;color:white;border-radius:13px;padding:25px 30px;margin-top:22px}.recommend h3{font-size:24px}.recommend p{color:#d9e8df}.case{margin-top:20px;background:white;border:1px solid var(--line);border-radius:13px;overflow:hidden}.case-head{padding:23px 26px 12px;border-bottom:1px solid var(--line)}.case-body{padding:21px 26px}.case-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}.label{font-size:12px;font-weight:800;color:var(--green);margin:12px 0 5px}.case p,.case li{font-size:14px}.case ul{padding-left:20px;margin-top:5px}.sample{background:#f1f4ef;border-radius:8px;padding:15px 18px;font-size:14px}.sample b{display:block}.checks{font-size:13px;padding-top:13px;margin-top:15px;border-top:1px solid var(--line);color:var(--muted)}details{margin-top:15px}summary{cursor:pointer;font-size:13px;font-weight:700;color:var(--green)}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#173c31;color:#e2f2e7;border-radius:8px;padding:18px;font:13px/1.8 Consolas,monospace}code{font: .94em Consolas,monospace;overflow-wrap:anywhere}.flow{display:flex;align-items:stretch;gap:10px;margin:20px 0}.flow div{flex:1;background:#edf3ea;border:1px solid var(--line);padding:18px;border-radius:8px;font-size:14px}.flow span{align-self:center;font-weight:bold;color:var(--green)}.sources{columns:2;column-gap:40px;padding-left:24px;font-size:12px}.sources li{break-inside:avoid;margin-bottom:16px;padding-left:4px}.sources a{overflow-wrap:anywhere}.sources small{font-size:11px}.footer{padding:40px 0;margin-top:45px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}.number{font-size:12px;letter-spacing:.1em;color:var(--green);font-weight:800}.compact{font-size:14px}.checklist{padding-left:21px}.checklist li{margin:8px 0}a:focus-visible,summary:focus-visible,button:focus-visible{outline:3px solid #ca903f;outline-offset:4px}
+@media(max-width:760px){.wrap{padding:0 18px}.hero{padding:37px 0}.grid,.three,.case-grid{grid-template-columns:1fr}h2{font-size:25px}main section{padding-top:38px}.sources{columns:1}.flow{flex-direction:column}.flow span{transform:rotate(90deg)}.case-head,.case-body{padding:18px}nav .wrap{gap:18px}.card{padding:19px}.hero h1 br{display:none}}
+@media print{body{background:white;font-size:10pt}nav,.no-print{display:none}.wrap{max-width:none;padding:0}.hero{background:white;color:var(--ink);padding:0 0 20px;border-bottom:2px solid var(--green)}.hero p,.hero .meta,.eyebrow{color:var(--muted)}.hero h1{font-size:29pt}.route span{color:var(--ink)}main section{padding-top:25px}h2{font-size:19pt}h3{font-size:14pt}.table{overflow:visible}table{min-width:0;font-size:9pt}th,td{padding:9px}.card,.case,.note,.recommend{break-inside:avoid}.case{break-inside:auto}.case-head{break-after:avoid}.case-grid{display:block}.case-grid>div{break-inside:avoid}.recommend{background:#e8f1e8;color:var(--ink)}.recommend p{color:var(--ink)}.sources{columns:1}.sources li{margin-bottom:7px}a{color:inherit}.footer{margin-top:20px;padding:15px 0}details{display:none}pre{background:#eef3ed;color:var(--ink)}}
+</style></head>
+<body>
+<header class="hero"><div class="wrap"><div class="eyebrow">ENGINEERING GUIDE / LOCAL OPEN-WEIGHT MODELS</div><h1>16GB・GPUなしから考える<br>ローカルLLMの選び方と業務活用</h1><p>Claudeの料金体系の変化をきっかけに、手元のPCで処理できる仕事を見極める。すでに利用できるCopilot Chatを踏まえ、モデルの選択肢・必要なPC・具体的な成果物を順に整理する。</p><div class="meta">対象：エンジニア ／ 現在のPC：RAM 16GB・専用GPUなし ／ 調査確認日：2026年10月4日</div><div class="route"><span>01 各社・規模別モデル</span><span>02 PCの条件</span><span>03 試す2モデル</span><span>04 業務の具体例</span><span>05 Copilotとの使い分け</span></div></div></header>
+<nav aria-label="資料の目次"><div class="wrap"><a href="#models">モデル一覧</a><a href="#hardware">必要スペック</a><a href="#selection">選定の結論</a><a href="#cases">業務の具体例</a><a href="#copilot">Copilot</a><a href="#trial">試し方</a><a href="#sources">出典</a><button onclick="window.print()">印刷 / PDF保存</button></div></nav>
+<main class="wrap">
+<section id="models"><div class="kicker">01 / MODEL LANDSCAPE</div><h2>まず、各社のシリーズとサイズを知る</h2><p class="intro">同じシリーズでも、小型モデルと大型モデルは更新時期が異なる。ここではローカルのテキスト業務に関係する代表7社の公開モデルを、サイズ帯ごとに整理した。各欄は確認できた現行世代・派生を示し、全メーカー・全用途の網羅的な発売順ランキングではない。</p>
+<div class="grid three"><div class="card"><h3>B＝10億パラメータ</h3><p class="compact">4Bはおおむね40億規模。大きいほどメモリが必要になるが、数字だけで日本語や業務の得意・不得意は決まらない。</p></div><div class="card"><h3>4bit量子化で軽くする</h3><p class="compact">重みを少ないビット数で保持する方式。配布ファイルを小さくできる。QATは量子化を考慮した学習で、低ビット化による品質低下を抑える狙いがある。</p></div><div class="card"><h3>MoEの「A」は稼働規模</h3><p class="compact">35B-A3Bは総量35B、1トークンで稼働する部分が約3B。CPUの計算量が小さくても、保持する重みは3B分では済まない。</p></div></div>
+<div class="table" style="margin-top:22px"><table><caption style="text-align:left;padding:16px;font-weight:700">規模別に見た公開モデルの位置づけ（表記は各社の公称値）</caption><thead><tr><th>提供元・シリーズ</th><th>小型：おおむね4B以下</th><th>中型：おおむね5〜14B</th><th>大型：おおむね26〜35B以上</th><th>読み取り方</th></tr></thead><tbody>
+<tr><td>Alibaba<br>Qwen <a class="ref" href="#s1">[1]</a></td><td>Qwen3.5<br>0.8B / 2B / 4B</td><td>Qwen3.5 9B</td><td>Qwen3.8 27B<br>Qwen3.6 35B-A3B<br><small>さらにQwen3.8 2.4T-A95B</small></td><td>全体の新世代は3.8。小型は3.5が現行候補。3.5の小型群は2026/3/2、3.8の27Bは8/14公開。</td></tr>
+<tr><td>Google<br>Gemma 4 <a class="ref" href="#s2">[2]</a></td><td>E2B / E4B<br><small>「E」はeffective。総量で4B以下という意味ではない。</small></td><td>12B</td><td>26B-A4B / 31B</td><td>小型のQAT版を比較対象にする。E4Bと通常の4Bは、同じメモリ量と考えない。</td></tr>
+<tr><td>IBM<br>Granite 4.2 <a class="ref" href="#s3">[3]</a></td><td>3B</td><td>8B</td><td>30B</td><td>2026/8公開の新しい選択肢。日本語・構造化出力・文書処理を比較する候補。</td></tr>
+<tr><td>Mistral AI<br>Ministral 3 <a class="ref" href="#s4">[4]</a></td><td>3B</td><td>8B / 14B</td><td>この小型シリーズには該当なし</td><td>エッジ向けのシリーズ。日本語やJSON出力を含む多言語・ツール利用に対応。</td></tr>
+<tr><td>Microsoft<br>Phi-4 <a class="ref" href="#s5">[5]</a></td><td>mini-instruct 3.8B<br>mini-reasoning / mini-flash-reasoning 約4B</td><td>multimodal 約5.6B<br>Phi-4 / reasoning / reasoning-plus 約14B</td><td>このシリーズには該当なし</td><td>汎用のinstructと推論向け派生を区別。推論向けの新しい派生がCPUで速いとは限らない。</td></tr>
+<tr><td>Meta<br>Llama / Muse <a class="ref" href="#s6">[6]</a></td><td>Llama 3.2<br>1B / 3B</td><td>小型と新しい大型で別世代</td><td>Muse Glimmer 30B</td><td>小型Llamaは旧世代の継続候補。新しいMuse Glimmerはエージェント向けで容量が大きい。</td></tr>
+<tr><td>NVIDIA<br>Nemotron <a class="ref" href="#s7">[7]</a></td><td>Nemotron 3 Nano 4B</td><td>ここでは掲載なし</td><td>Nemotron 3.5 Lightning<br>30B-A3B</td><td>小型と新しいMoEを分けて見る。Lightningの稼働3Bを「3B並みのRAM」と解釈しない。</td></tr>
+</tbody></table></div>
+<p class="compact muted">対象はダウンロードして実行できるオープンウェイトモデル。埋め込み専用・音声専用・業務特化の全派生、および大規模サーバー中心のモデルは省略した。ライセンスは各モデルで異なるため、配布元の条件を適用する。Ollamaの<code>latest</code>は既定タグであり、全サイズの「最新発売モデル」を意味しない。</p>
+<div class="soft"><strong>「最新モデルが使いたい」を、サイズ別に具体化する</strong><p class="compact">Qwenなら、小型の現行候補はQwen3.5 4B。Qwen3.8 27Bは新しいが、Ollama配布サイズだけで約18GBとなり、今回の16GB PCの主候補にはしにくい。新しさと搭載可能性を両方確認する。<a class="ref" href="#s1">[1]</a><a class="ref" href="#s8">[8]</a></p></div>
+</section>
+<section id="hardware"><div class="kicker">02 / HARDWARE FIT</div><h2>どのPCなら、どの規模を試せるか</h2><p class="intro">以下は短いテキストを単独処理する場合の導入目安。RAMはCPU推論、VRAMはGPUに載せる際の容量として分けて示す。CPU型番・メモリ帯域・入力長による差が大きく、搭載できることと快適な速度は別々に評価する。</p>
+<div class="table"><table><thead><tr><th>PC構成の目安</th><th>比較しやすい候補</th><th>具体的に検討する仕事</th><th>判断上の条件</th></tr></thead><tbody>
+<tr><td>RAM 8GB<br>専用GPUなし</td><td>Qwen3.5 0.8B / 2B<br>Llama3.2 1B</td><td>短い問い合わせの分類、数行から項目抽出、文章の言い換え。</td><td>編集上の推定。OSとの共存が厳しく、まず短文・1処理から。</td></tr>
+<tr style="background:#f0f7ef"><td>RAM 16GB<br>専用GPUなし<br><span class="tag">今回の条件</span></td><td>Qwen3.5 4B<br>Gemma4 E4B QAT<br><small>追加比較：Granite4.2 3B、Ministral3 3B</small></td><td>関数の読解、単体テスト案、エラーの切り分け、補助スクリプト、PR説明文。</td><td>主候補2つは同RAM・CPU推論の個人例あり。秒単位の即答は保証せず、完了時間を測る。</td></tr>
+<tr><td>RAM 32GB<br>専用GPUなし</td><td>Qwen3.5 9B<br>Granite4.2 8B<br>Gemma4 12B / Ministral3 14B</td><td>より長い手順書の比較、複数の条件を含む仕様からレビュー表を作る試行。</td><td>編集上の推定。モデルを大きくする余地は増えるが、CPUの待ち時間は増え得る。</td></tr>
+<tr><td>RAM 32GB以上<br>VRAM 12〜16GB</td><td>4〜14B級の量子化版</td><td>小さなコード修正を往復する作業、文書を何件も順番に処理する作業。</td><td>GPU対応と重み＋キャッシュの収容を確認。12GBで全14B・全入力長が収まる保証はない。</td></tr>
+<tr><td>RAM 64GB以上<br>VRAM 24〜32GB</td><td>Qwen3.8 27B<br>Gemma4 26B / 31B<br>Muse Glimmer 30B</td><td>複数ファイルの調査・修正や、検索・ツール操作を伴うエージェントの検証。</td><td>編集上の推定。24GBは一部構成で不足。長い入力や大きい配布版には32GB超も必要。</td></tr>
+</tbody></table></div>
+<div class="note"><strong>「3.4GBのダウンロード」＝「RAMが3.4GBあればよい」ではない。</strong><br>実際には、重みの実行時表現・会話のキャッシュ・処理用メモリ・OS・IDE・ブラウザーが必要。コンテキスト長を増やすと使用メモリも増える。モデルが公称128K/256K対応でも、16GB PCでその長さを使えるとは限らない。<a class="ref" href="#s9">[9]</a></div>
+<h3>16GBで比較する、具体的な配布ファイル</h3><div class="table"><table><thead><tr><th>Ollamaタグ</th><th>配布サイズ</th><th>今回の位置づけ</th><th>根拠</th></tr></thead><tbody>
+<tr><td><code>qwen3.5:4b</code></td><td>3.4GB</td><td>小さなコード・短文処理を試す主候補</td><td><a href="#s10">配布情報 [10]</a>／<a href="#s12">CPU・16GBの個人例 [12]</a></td></tr>
+<tr><td><code>gemma4:e4b-it-qat</code></td><td>6.1GB</td><td>日本語の文書処理を試す主候補</td><td><a href="#s2">配布情報 [2]</a>／<a href="#s11">CPU・16GBの個人例 [11]</a></td></tr>
+<tr><td><code>granite4.2:3b</code></td><td>2.2GB</td><td>新しい小型の追加比較候補</td><td><a href="#s3">[3]</a> 同条件での個人業務例は今回未確認</td></tr>
+<tr><td><code>ministral-3:3b</code></td><td>3.0GB</td><td>追加比較候補</td><td><a href="#s4">[4]</a> 同条件での個人業務例は今回未確認</td></tr>
+<tr><td><code>gemma4:e2b-it-qat</code></td><td>4.3GB</td><td>E4Bが重い場合の小型比較</td><td><a href="#s13">[13]</a></td></tr>
+<tr><td><code>qwen3.5:9b</code></td><td>6.6GB</td><td>4Bの出力品質に不足があるときに追加</td><td><a href="#s10">[10]</a> メモリと待ち時間の余裕を先に確認</td></tr>
+</tbody></table></div>
+<p class="compact muted">サイズは確認時点の配布表示。必要RAMの公式最低値ではない。Gemma E4Bのタグ情報はモデル本体7.46Bと別のprojectorを示す。容量比較は「E4B」の文字より、使用するタグと実測を優先する。<a class="ref" href="#s2">[2]</a></p>
+</section>
+<section id="selection"><div class="kicker">03 / WHY THESE TWO</div><h2>今回のPCでは、この2モデルから試す</h2><p class="intro">選定理由は、公開されていること、配布サイズが現実的なこと、CPU・16GBの個人検証があること。全モデルを同条件で比較した性能順位ではない。</p>
+<div class="grid"><article class="card pick"><span class="tag">日本語文書の比較軸</span><h3><code>gemma4:e4b-it-qat</code></h3><div class="big">6.1GB <small>ダウンロードサイズ</small></div><p>PR説明文の整形や、短い仕様から受入条件を抜き出す作業を最初の対象にする。日本語文書を扱った同条件の検証から考えた応用案。</p><p class="compact muted">Core i5-1145G7・16GB・CPU推論の個人記録では、筆者がE4B QATを使いやすいと評価。架空資料による単発の観察であり、一般的な優位性の証明にはしない。<a href="#s11">[11]</a></p></article>
+<article class="card pick"><span class="tag">軽量なコード・短文処理の比較軸</span><h3><code>qwen3.5:4b</code></h3><div class="big">3.4GB <small>ダウンロードサイズ</small></div><p>関数単位のコード相談や、短い文章の要約を最初の対象にする。CPUだけで具体的な課題を実行した記録がある。</p><p class="compact muted">Ryzen 7 7735HS・16GBの個人記録では、Think OFFでPython関数生成やバグ修正を実施。回答の誤りも報告されており、テスト・原文照合を組み合わせる。<a href="#s12">[12]</a></p></article></div>
+<div class="recommend"><h3>結論：既存PCで2モデルを同じ業務に当て、修正時間まで比較する</h3><p>関数の読解・テスト案・局所的な修正はQwenから、PR説明文・仕様の整理はGemmaから着手する。普段の開発から題材を選び、同じ課題で両方を比較する。次章で、各作業へ応用できると考える理由と成果物を示す。</p></div>
+<p class="compact muted">Granite4.2 3Bなど、公開時期がより新しい小型モデルもある。「最も新しい2つ」という理由での推薦ではなく、今回の業務説明に使える実例のある2つを最初の試行対象とした。ほかの候補の性能が低いと結論づけるものではない。</p>
+</section>
+<section id="cases"><div class="kicker">04 / EVERYDAY ENGINEERING</div><h2>日々の開発で、まず任せる6つの作業</h2>
+<p class="intro">コードを読む、テストを書く、エラーを調べる、変更内容を説明する。普段の開発作業を、16GB・CPU推論で試しやすい単位に分ける。<b>特定の業界・帳票・閉域環境は前提にしない。</b>まず日常の小さな作業で品質を確かめ、Copilotとの使い分けは次章で判断する。</p>
+<div class="table"><table><thead><tr><th>いつ使うか</th><th>任せる作業・受け取るもの</th><th>最初の比較候補</th><th>人の作業がどう変わるか</th></tr></thead><tbody>
+<tr><td>初めて触る関数を読むとき</td><td>入力・出力・分岐・副作用をまとめた読解メモ</td><td>Qwen3.5 4B</td><td>最初の見取り図を得て、怪しい分岐をコードで確認する。</td></tr>
+<tr><td>実装後にテストを足すとき</td><td>境界値の表と、既存形式に沿った単体テスト案</td><td>Qwen3.5 4B</td><td>白紙からの列挙を減らし、期待値と漏れを確認する。</td></tr>
+<tr><td>エラーが出て手が止まったとき</td><td>原因候補・切り分け手順・小さな修正案</td><td>Qwen3.5 4B</td><td>調べる順序を整理して、一つずつ再現・検証する。</td></tr>
+<tr><td>データ加工を手で繰り返しているとき</td><td>CSV・JSON等を加工する短い補助スクリプト</td><td>Qwen3.5 4B</td><td>入力例から処理の下書きを作り、実データ投入前に試す。</td></tr>
+<tr><td>PRを出す・変更を説明するとき</td><td>変更理由・内容・確認結果・未確認を揃えた説明文</td><td>Gemma4 E4B QAT</td><td>箇条書きの開発メモを整え、事実の確認に集中する。</td></tr>
+<tr><td>仕様を受け取り、実装に入るとき</td><td>明記された受入条件と、実装前に聞く質問の表</td><td>Gemma4 E4B QAT</td><td>曖昧な条件を先に洗い出し、手戻りの原因を減らす。</td></tr>
+</tbody></table></div>
+<div class="soft"><strong>「できると考える理由」を、業務へ移せる形で読む</strong><p>共通するのは、<b>必要な情報を入力に入れる → 一つの変換・説明・提案をさせる → コード・テスト・原文で照合する</b>という形。Qwenは小さなコード課題の実行記録、Gemmaは日本語文書の読解・整形の検証を根拠に、近い作業へ応用する。パラメータ数や量子化だけから業務の成功を説明しない。</p></div>
+<div class="grid"><div class="card"><span class="tag">確認できた個人実例</span><h3>Qwen：関数生成・バグ修正</h3><p class="compact">Chandanrohit氏はRyzen7 7735HS・16GB・CPU推論で、重複検出関数の生成、ループ中の変更バグの修正、短文要約を実施。前二者はThink OFFで1分19秒、1分38秒と報告。説明の誤りも掲載している。<a href="#s12">[12]</a></p></div><div class="card"><span class="tag">確認できた個人検証</span><h3>Gemma：日本語文書の読解・整形</h3><p class="compact">ut_notes氏はCore i5・16GB・CPU推論で、架空の障害メモの整形や計画文書の読解を試し、E4B QATを良好と評価。各課題は基本1回の観察で、本番の導入実績や統計的な性能評価ではない。<a href="#s11">[11]</a></p></div></div>
+<p class="compact muted">以下6件は、これらの能力から考えた本資料の応用案。個々の業務フローを、この2モデルで実測済みという意味ではない。入力・成果物は説明用の作例で、モデルの実出力ではない。比較候補の役割は暫定で、同じ課題を両モデルへ渡して確かめられる。</p>
+
+<article class="case" id="case-read"><div class="case-head"><div class="number">01 / コードを読む</div><h3>初見の関数について「何をして、どこで振る舞いが変わるか」を整理する</h3><span class="tag">Qwen3.5 4B</span><span class="tag idea">コード課題の実例からの応用案</span></div><div class="case-body"><div class="case-grid"><div>
+<div class="label">そのまま日常で使う場面</div><p>既存処理を変更する前、他の人のPRを読む前、数か月前の自分のコードを読み直すとき。関数1つと、その場で必要な型・呼び出し例を渡す。</p>
+<div class="sample"><b>入力例</b>注文一覧を受け取り、「キャンセル済みを除外 → 顧客ID別に集計 → 金額順に返す」関数。<br>依頼：処理順、入力・出力の具体例、空配列の場合、外部への書込みの有無を説明して。</div>
+<div class="label">受け取りたい成果物</div><p>処理の流れを5行で説明したメモと、確認すべき分岐の一覧。「この補助関数の中身がないため、副作用は不明」のように未確認も残す。読む場所の当たりを付けてから、自分で実装を確認する。</p></div><div>
+<div class="label">なぜこのモデルで取り組めると考えるか</div><p><b>根拠：</b>Qwen4Bで小さな関数の生成・修正を行った記録がある。<a href="#s12">[12]</a> <b>応用の理由：</b>ここで必要なのは、変数の流れや条件分岐を読み、自然言語へ変換する能力。判断に必要な範囲を関数と依存部分に絞れば、コード課題で使われた能力を応用できると考える。</p>
+<div class="label">依頼の仕方</div><p>「このシステムを説明して」より、「この関数の入力、出力、分岐、副作用を、該当箇所つきで説明して」と範囲を決める。関数名だけから用途や外部処理を推測させない。</p>
+<div class="label">別の業務への応用</div><p>SQLの条件説明、設定ファイルの項目説明、小さなシェルスクリプトの読解。共通するのは、提示した処理を人が確認しやすい表現へ変えること。</p></div></div><div class="checks"><b>確認：</b>説明された分岐が実在するか、入力例の結果が合うかを確認する。コード読解の正確性を個人実例だけで保証はできない。</div>
+<details><summary>すぐ試せる依頼文</summary><pre>次の関数を、処理順・入力例と出力・条件分岐・副作用の4項目で説明してください。
+各説明に根拠となるコードを短く添えてください。
+提示していない関数の中身は推測せず、確認が必要な点として分けてください。
+［対象関数・必要な型・呼び出し例］</pre></details></div></article>
+
+<article class="case" id="case-tests"><div class="case-head"><div class="number">02 / テストを書く</div><h3>仕様から境界値を並べ、単体テストの下書きを作る</h3><span class="tag">Qwen3.5 4B</span><span class="tag idea">本資料の提案：テスト生成の直接実績は未確認</span></div><div class="case-body"><div class="case-grid"><div>
+<div class="label">そのまま日常で使う場面</div><p>関数を実装した直後、バグ修正で再発防止テストを追加するとき。対象関数・本来の仕様・既存テスト1件を渡す。実装だけを見せると、現在のバグを正しい仕様として追認する恐れがある。</p>
+<div class="sample"><b>入力例</b>送料計算：購入額5,000円以上は無料、それ未満は500円。会員は金額を問わず無料。負の購入額はエラー。<br><b>目標とするテスト表</b>非会員：4,999→500／5,000→0／5,001→0<br>会員：0→0／4,999→0<br>不正値：−1→エラー</div>
+<div class="label">受け取りたい成果物</div><p>「条件・入力・期待結果」の表を先に作り、人が期待値を確認。その後、既存のpytest/Jest等の書式に合わせたテストコードを下書きさせる。</p></div><div>
+<div class="label">なぜこのモデルで取り組めると考えるか</div><p><b>根拠：</b>Qwen4Bには短いPython関数を生成した実行例がある。<a href="#s12">[12]</a> <b>応用の理由：</b>既存テストを見本にし、仕様の条件を具体的な入力へ置き換える作業は、小さなコード生成へ分解できる。条件整理とコード生成を分けると、間違いを途中で見つけやすい。</p>
+<div class="label">小型モデルで扱いやすくする条件</div><p>1関数・1仕様から始める。正解表は人が先に確認し、モックが必要な依存関数も入力に含める。多数のサービスをまたぐ結合テスト全体は別の評価対象にする。</p>
+<div class="label">別の業務への応用</div><p>入力チェック、権限条件、ページング、日付の範囲指定。共通する能力は、条件を具体的な確認ケースに展開してコード化すること。</p></div></div><div class="checks"><b>確認：</b>テストが実行できること、期待値が仕様と一致すること、修正前のバグで失敗することを確認。生成件数の多さやカバレッジだけで合格にしない。</div>
+<details><summary>すぐ試せる依頼文</summary><pre>次の仕様と関数について、正常系・境界値・異常系のテストケース表を作ってください。
+列は「観点／入力／期待結果／根拠となる仕様」。
+仕様にない挙動は決めず「要確認」としてください。
+まず表だけを出し、私が期待値を確認した後で既存テストの形式にコード化してください。
+［仕様］［関数］［既存テスト1件］</pre></details></div></article>
+
+<article class="case" id="case-debug"><div class="case-head"><div class="number">03 / エラーを調べる</div><h3>エラーと該当コードから、最初に確認する箇所を絞る</h3><span class="tag">Qwen3.5 4B</span><span class="tag idea">局所的なバグ修正の実例からの応用案</span></div><div class="case-body"><div class="case-grid"><div>
+<div class="label">そのまま日常で使う場面</div><p>ローカル実行やテストで例外が出たとき。エラー全文、該当関数、再現入力、期待動作、言語・ライブラリのバージョンをまとめて渡す。</p>
+<div class="sample"><b>入力例</b>TypeError: 'NoneType' object is not iterable<br>該当箇所：itemsをfor文で処理している。<br>呼び出し側の入力：{"items": null}<br>仕様：itemsがnullの場合は空の一覧として扱う。</div>
+<div class="label">受け取りたい成果物</div><p>候補：「itemsがNoneのまま反復処理へ入った」。確認箇所：呼び出し直前の値。修正案：Noneの場合だけ空配列に正規化。再発防止：null・空配列・通常配列のテスト案。</p></div><div>
+<div class="label">なぜこのモデルで取り組めると考えるか</div><p><b>根拠：</b>Qwen4Bでループ中の変更バグを修正した記録がある。<a href="#s12">[12]</a> <b>応用の理由：</b>エラー文、コード、再現入力が揃うと、原因候補を局所的な言語の挙動に絞れる。システム全体の未知の原因を当てる必要が少なくなる。</p>
+<div class="label">依頼の仕方</div><p>原因候補は最大3つ、それぞれに「根拠」「確認方法」を付ける。修正は最小差分で求める。コードにない外部障害を断定したら、提案を採用せず追加調査する。</p>
+<div class="label">別の業務への応用</div><p>JSONキーの欠落、型の食い違い、パスの組立てミス、ループの取りこぼし。入力と期待結果を示せる不具合の一次切り分けに広げられる。</p></div></div><div class="checks"><b>確認：</b>同じ入力で再現させ、候補の修正後に症状が消えるかを見る。競合・性能・分散システムの障害などは、測定や広い文脈が必要で、この例から成功を推定できない。</div></div></article>
+
+<article class="case" id="case-script"><div class="case-head"><div class="number">04 / 小さな自動化を書く</div><h3>繰り返すCSV・JSON加工を、短いスクリプトへ変える</h3><span class="tag">Qwen3.5 4B</span><span class="tag idea">関数生成の実例からの応用案</span></div><div class="case-body"><div class="case-grid"><div>
+<div class="label">そのまま日常で使う場面</div><p>調査用のCSVから対象行を抜く、APIレスポンスを見やすくする、テストデータを整形するなど、手で同じ操作を繰り返すとき。</p>
+<div class="sample"><b>入力例</b>列：id,status,updated_at<br>やりたいこと：statusがfailedの行だけを別CSVへ出力し、idの先頭ゼロと行順を保つ。入力ファイルは変更しない。Python標準ライブラリだけを使う。</div>
+<div class="label">受け取りたい成果物</div><p>CSVを読み、新しいCSVへ書く数十行程度のコード、実行方法、入力・期待出力の小さなサンプル。読込→変換→出力が見渡せるサイズで作らせる。</p></div><div>
+<div class="label">なぜこのモデルで取り組めると考えるか</div><p><b>根拠：</b>Qwen4Bには重複検出関数の生成例がある。<a href="#s12">[12]</a> <b>応用の理由：</b>条件に一致する要素を選び、指定形式へ出す処理は、入力と出力を明確にしたコード生成に落とせる。標準ライブラリに限定すれば、未提示の社内APIや新しい依存関係を推測する余地も減る。</p>
+<div class="label">小型モデルで扱いやすくする条件</div><p>サンプル数行と期待結果を渡す。「便利なツールを作って」ではなく、「この列をこの条件で残す」と1処理に絞る。既存データの削除・上書きは行わない設計から始める。</p>
+<div class="label">別の業務への応用</div><p>JSONから必要キーだけ抽出、2ファイルのID差分、テスト用ダミーデータ生成。共通する能力は、自然言語で指定した変換を短いプログラムへ落とすこと。</p></div></div><div class="checks"><b>確認：</b>空データ、引用符・改行入りフィールド、文字コード、先頭ゼロをサンプルで確認する。SQLや正規表現だけで済む作業では、その案を作らせる使い方でもよい。</div></div></article>
+
+<article class="case" id="case-pr"><div class="case-head"><div class="number">05 / 変更内容を伝える</div><h3>実装メモを、読み手が確認しやすいPR説明文へ整える</h3><span class="tag">Gemma4 E4B QAT</span><span class="tag idea">文書整形の検証からの応用案</span></div><div class="case-body"><div class="case-grid"><div>
+<div class="label">そのまま日常で使う場面</div><p>実装は終わったが、PR本文やレビュー依頼を書くのに時間がかかるとき。変更理由、自分が変更した点、実施した確認、未確認事項を箇条書きで渡す。</p>
+<div class="sample"><b>入力例</b>一覧が空だと画面で例外。空配列のときは「データなし」を表示するよう変更。通常一覧の表示は変えていない。追加した単体テストは成功。実ブラウザーでは未確認。</div>
+<div class="label">目標とするPR本文</div><div class="sample">目的：空一覧で発生する例外への対応<br>変更：空の場合の表示分岐を追加<br>確認済み：追加した単体テストが成功<br>未確認：実ブラウザーでの表示<br>レビュー観点：空一覧時の表示と既存表示への影響</div></div><div>
+<div class="label">なぜこのモデルで取り組めると考えるか</div><p><b>根拠：</b>Gemma E4B QATを使った日本語メモの整形・文書読解の検証がある。<a href="#s11">[11]</a> <b>応用の理由：</b>PR本文も、すでに与えた事実を見出しへ分類し、自然な説明へ整える作業。事実の入力を人が用意すれば、未知の設計意図を推測させずに済む。</p>
+<div class="label">依頼の仕方</div><p>「確認済み」と「未確認」を分け、書かれていないテスト成功や影響範囲を追加しないよう指定する。diffから直接説明させる場合は、差分を読めるかを別途評価する。</p>
+<div class="label">別の業務への応用</div><p>コミットメッセージ、READMEの追記、レビュー回答、作業の共有文。共通する能力は、事実を保ったまま読み手向けの形へ整えること。</p></div></div><div class="checks"><b>確認：</b>元メモにない実績や仕様が足されていないかを見る。投稿は人が確認して行う。流暢さと事実の正しさを分けて評価する。</div>
+<details><summary>すぐ試せる依頼文</summary><pre>以下のメモをPR説明文に整えてください。
+見出し：目的／変更内容／確認済み／未確認／レビューしてほしい点。
+メモにないテスト結果、設計意図、影響範囲は追加しないでください。
+未確認事項は残し、全体を400字以内にしてください。
+［自分の変更メモ］</pre></details></div></article>
+
+<article class="case" id="case-spec"><div class="case-head"><div class="number">06 / 実装前に仕様を読む</div><h3>短い仕様から、受入条件と確認質問を作る</h3><span class="tag">Gemma4 E4B QAT</span><span class="tag idea">文書読解の検証からの応用案</span></div><div class="case-body"><div class="case-grid"><div>
+<div class="label">そのまま日常で使う場面</div><p>Issueやチャットで機能追加の依頼を受け、どこまで実装すればよいか整理するとき。1機能の仕様文と関連する例外条件を渡す。</p>
+<div class="sample"><b>入力例</b>一覧を1ページ20件で表示する。検索条件を変えたら先頭ページに戻す。0件のときは「該当なし」と表示する。並び順はまだ決まっていない。</div>
+<div class="label">目標とする成果物</div><p>受入条件：20件単位、検索変更で先頭へ、0件表示。確認質問：並び順、20件目の次のページの扱い、検索中に件数が減った場合のページ補正。<b>明記された条件と、提案した質問を別欄にする。</b></p></div><div>
+<div class="label">なぜこのモデルで取り組めると考えるか</div><p><b>根拠：</b>Gemmaの検証には、文書中の条件・対象外・未記載情報を読む課題がある。<a href="#s11">[11]</a> <b>応用の理由：</b>受入条件の整理も、文の意味を読んで条件を抽出する作業。質問の列挙はそこから一段先の提案なので、決定済み仕様に混ぜず、人が必要性を選ぶ。</p>
+<div class="label">小型モデルで扱いやすくする条件</div><p>1機能ずつ、明記条件には原文を付けさせる。複数の資料に条件が散らばる場合は、必要な節を担当者が揃える。モデルだけで仕様漏れを網羅できるとは扱わない。</p>
+<div class="label">別の業務への応用</div><p>レビュー観点の下書き、手動テスト手順、APIの受入条件。共通する能力は、文章の条件を確認可能な項目へ変えること。</p></div></div><div class="checks"><b>確認：</b>明記条件が漏れていないか、未決事項を勝手に決めていないかを照合する。自分では気付かなかった質問が有用だったかも評価する。</div></div></article>
+
+<h3 style="margin-top:28px">明日から始めるなら、この2つ</h3>
+<div class="grid"><div class="card pick"><h3>Qwenで、今触っている関数のテスト表を作る</h3><p>仕様・関数・既存テスト1件を渡す。まず境界値の表を出し、人が期待値を直してからテストコードにする。既存プロジェクトから題材を選べる。</p></div><div class="card pick"><h3>Gemmaで、次のPR説明文を作る</h3><p>変更理由・変更点・確認結果・未確認を箇条書きで渡す。整えた文章を見直して使う。特殊な業務データや自動化基盤を用意する必要がない。</p></div></div>
+<div class="note"><strong>16GB・CPUで試す単位</strong><br>関数1つ、短いエラー1件、仕様1機能、PR説明1件から始める。20〜80行程度のコードや、数百〜2,000字程度の文章は試行時の目安で、モデルの公式上限・成功保証ではない。Think OFFで応答時間を測り、コードに必要な型や依存箇所は省かない。</div>
+<p class="compact">以上の作業はCopilotでも可能。ローカルで任せられる仕事の候補をまず具体化し、<b>外部送信を避ける・オフラインでも使う・モデル版を自分で保持する</b>必要があるときに、次章の利点が加わる。通常の開発作業だけでも試せるが、Copilotより高品質・高速になるとは前提にしない。</p>
+</section>
+
+<section id="copilot"><div class="kicker">05 / THE REQUIREMENTS CLOUD CHAT CANNOT MEET</div><h2>Copilotがある職場で、ローカルを追加する明確な理由</h2>
+<p class="intro">ここでのCopilotは、エンジニア向けの<b>GitHub Copilot Chatをクラウドモデルへ接続して使う現状</b>を想定する。導入の理由が最も明確なのは、<b>「入力を外部へ一切送れない」または「外部ネットワークなしで推論したい」</b>という要件がある場合。この要件はモデルの回答能力ではなく、実行場所で決まる。</p>
+<div class="table"><table><thead><tr><th>必須要件と実際の仕事</th><th>現在のクラウド接続Copilot Chat</th><th>ローカルで実現する構成</th><th>今回の提案</th></tr></thead><tbody>
+<tr><td>外部送信ゼロ<br><small>社内コードをそのまま読解・テスト作成に使う</small></td><td><b>この要件を満たせない。</b>クラウド推論には入力の送信が必要。学習利用の有無とは別の条件。</td><td>ローカルファイル→ローカルモデル→ローカル保存。検索・外部ツールを使わず、送信経路を閉じる。</td><td><a href="#case-tests">単体テスト案</a>をQwenで試す。社内固有の型やコードを外部へ渡さず、入力に含められる。</td></tr>
+<tr><td>外部ネットワークなし<br><small>ネットに接続できない時間にもエラーを調査</small></td><td><b>クラウドモデルへ接続できず推論できない。</b></td><td>モデルと実行環境を事前導入し、CPU推論。ローカルのエディターとテスト実行環境で完結。</td><td><a href="#case-debug">エラーの一次切り分け</a>をQwenで試す。モデルを事前取得しておけば、ネット接続なしで候補を得られる。</td></tr>
+<tr><td>モデルの重みを保管して同じ版を使い続ける<br><small>テスト案やPR説明文を生成する開発補助ツールの版を管理</small></td><td>サービス側の提供・更新・廃止に依存する。クラウドモデルの重みを利用者が保管して推論する運用はできない。</td><td>取得した重み、モデルID、実行ソフト、設定を保管し、更新を管理する。出力の完全一致は別途評価。</td><td>開発補助ツールへ組み込む段階で適用。タグ名だけでなく取得版を記録する。</td></tr>
+</tbody></table></div>
+<p class="compact muted">ローカル推論の実行とクラウド機能の無効化はOllama公式FAQに説明がある。<a href="#s17">[17]</a> 「ローカルモデルを選んだ」だけでアプリ全体の外部通信がなくなる保証にはならない。上記の運用では、クラウドへのフォールバック・外部検索・同期先を含めてローカルに揃える。</p>
+<h3 style="margin-top:28px">一方、バッチ化や料金の話は、こう判断する</h3>
+<div class="grid"><div class="card"><h3>フォルダー監視・定期処理</h3><p>変更メモからPR本文の下書きを保存する仕組みは、クラウドAPIやCopilotの周辺機能を使って構築できる場合もある。<b>自動化そのものをローカル固有の能力とはしない。</b></p><p class="compact">ローカルの利点は、その処理を外部送信なしで実装でき、推論を自作アプリから呼び出せること。上表の要件を持つ業務に組み込むと、追加する理由が明確になる。</p></div><div class="card"><h3>既存Copilotとの費用比較</h3><p>すでに使えるCopilotで仕事が完了するなら、ローカル導入だけで費用削減とは言えない。ローカルには電力・待ち時間・導入保守の負担がある。</p><p class="compact">追加理由は「クラウドへ渡せなかった業務にも使えること」から評価する。利用量が増えた場合は、実際の契約費と人の作業時間を含めて比較する。</p></div></div>
+<div class="soft"><strong>Copilotのチャット画面にローカルモデルを追加してもよい</strong><p>VS CodeはOllamaなどのBYOKモデルとオフラインチャットをサポートしている。したがって「Copilotという画面では絶対に不可能」とは言えない。上表の要件を満たすには、<b>現状のクラウド推論をローカル推論へ切り替える構成を追加する</b>。チャット用途は既存UI、定期処理は自作スクリプト、と使い分けられる。<a href="#s14">[14]</a></p><p class="compact">BYOKだけではインライン補完や埋め込み依存の検索は置き換わらない。会社のモデル接続ポリシーと、使用する拡張機能・補助モデルの経路を合わせて確認する。</p></div>
+<div class="recommend"><h3>導入判断：日常の開発作業で試し、運用上の利点と合わせて選ぶ</h3><p><b>まずQwenで関数のテスト案、GemmaでPR説明文を作る。</b>ローカルの品質・待ち時間が許容でき、外部送信回避やオフライン利用にも価値があれば継続する。そうした要件がなく、Copilotで十分に効率よくできる作業では、引き続きCopilotを使う判断も合理的。</p></div>
+</section>
+
+<section id="trial"><div class="kicker">06 / FIRST TRIAL</div><h2>次の開発作業を題材に、確認・修正まで含めて比べる</h2>
+<div class="grid three"><div class="card"><span class="number">01 / テスト</span><h3>今の関数を1つ</h3><p class="compact">仕様と既存テストを渡し、Qwenでテスト表を作る。期待値の誤り、見落としていた境界値、テストを使える状態に直す時間を記録する。</p></div><div class="card"><span class="number">02 / 説明文</span><h3>次のPRを1件</h3><p class="compact">変更メモをGemmaで整える。未実施のテスト成功などが追加されていないかを確認し、手書きと完成までの時間を比べる。</p></div><div class="card"><span class="number">03 / 調査</span><h3>直した不具合を1件</h3><p class="compact">答えの分かる過去のエラーをQwenへ渡す。原因候補にたどり着くか、提案した確認手順が実行可能かを確かめる。</p></div></div>
+<p class="compact">最初の1件で使い方を調整し、その後は同じ種類の作業5件程度で比較する。評価件数は試行計画の提案。自分で考える時間、モデルへの入力準備、待ち時間、確認・修正の時間を分けて記録する。</p>
+<div class="grid" style="margin-top:20px"><div class="card"><h3>PC側の初期条件</h3><ul class="checklist compact"><li>現行Ollamaを使用。初回はDocker等を追加せず、モデルを1つずつ実行。</li><li>2モデルの配布合計は約9.5GB。ダウンロード・更新の余裕を含め、空きSSD 20GB程度を確保する計画にする。</li><li>Think OFF、短い入力、コンテキスト4Kから開始。これは本資料の試行設定で、公式最低要件ではない。</li><li>RAM不足やスワップが出る場合は入力を短くし、常駐アプリを減らす。入力が枠を超える場合は分割する。</li></ul></div><div class="card"><h3>記録するもの</h3><ul class="checklist compact"><li>CPU型番、RAM、Ollamaのバージョン、モデルタグとID。</li><li>入力長、コンテキスト設定、Think設定。</li><li>読み込みを含む時間と、読み込み済みの完了時間。</li><li>最大RAM使用量、誤りの数、最終成果物までの人の修正時間。</li><li>Copilotと比較できるデータでは、同じ課題で比較する。</li></ul></div></div>
+<details><summary>Ollamaで試す最小コマンドを表示</summary><pre># PowerShell：モデルの取得（初回はネット接続が必要）
+ollama pull qwen3.5:4b
+ollama pull gemma4:e4b-it-qat
+
+# まずQwenを起動
+ollama run qwen3.5:4b
+
+# 起動後のチャット内で入力
+/set nothink
+/set parameter num_ctx 4096
+# ここに短い業務サンプルを入力。終了は /bye
+
+# PowerShellに戻り、モデルを切り替える
+ollama stop qwen3.5:4b
+ollama run gemma4:e4b-it-qat
+# 同様に /set nothink とコンテキスト設定を行う
+
+# 別のPowerShellから稼働状況を確認
+ollama ps</pre><p class="compact">サイズを省略したタグや<code>-cloud</code>を選ばず、上記のローカルタグを指定する。<code>ollama ps</code>でCPU / GPUの割当とコンテキストを確認する。<a href="#s9">[9]</a></p></details>
+<div class="recommend"><h3>導入の判断は「生成できた」から一歩進める</h3><p>人の確認・修正を含む所要時間が短くなる仕事、または外部送信できないため従来AIを使えなかった仕事を採用対象にする。16GBのまま価値を確認し、品質不足なら別モデル、速度不足ならハードウェアを次に比較する。</p></div>
+</section>
+<section id="sources"><div class="kicker">SOURCES &amp; READING NOTES</div><h2>出典と、資料の読み方</h2><p class="compact muted">確認日：2026年10月4日。公式・配布情報はモデル仕様、本人の公開記録は実行例の根拠として使用。個人記録は要約して紹介した。本資料では対象PC上でモデルの実行・性能測定はしていない。掲載した業務サンプルは未検証の提案であり、実出力や本番導入事例を装うものではない。</p>
+<ol class="sources">
+<li id="s1"><a href="https://github.com/QwenLM/Qwen3.8">Qwen公式：Qwen3.8 / 3.6 / 3.5の公開情報</a><small>サイズごとに公開世代が異なること、公開日とモデル名。</small></li>
+<li id="s2"><a href="https://ollama.com/library/gemma4:e4b-it-qat">Ollama：Gemma4 E4B IT QAT</a> ／ <a href="https://ollama.com/library/gemma4/tags">Gemma4タグ一覧</a><small>6.1GB、量子化、モデル本体の規模、シリーズ構成。</small></li>
+<li id="s3"><a href="https://research.ibm.com/blog/introducing-granite-4-2">IBM Research：Granite4.2</a> ／ <a href="https://ollama.com/library/granite4.2">Ollama配布</a><small>3B / 8B / 30B、公開時期、日本語対応と容量。</small></li>
+<li id="s4"><a href="https://ollama.com/library/ministral-3">Ollama：Ministral3</a><small>3B / 8B / 14B、小型の配布サイズと対応機能。</small></li>
+<li id="s5"><a href="https://huggingface.co/collections/microsoft/phi-4">Microsoft公式：Phi-4モデル一覧</a> ／ <a href="https://ollama.com/library/phi4-mini">Phi4-mini配布</a><small>用途別のmini・reasoning・multimodal派生。HFの自動集計表示と公称パラメータには丸めの差がある。</small></li>
+<li id="s6"><a href="https://ollama.com/library/llama3.2">Ollama：Llama3.2</a> ／ <a href="https://ollama.com/library/muse-glimmer">Muse Glimmer</a><small>小型Llamaと新しい30Bモデルの位置づけ。</small></li>
+<li id="s7"><a href="https://ollama.com/library/nemotron-3-nano:4b">Ollama：Nemotron3 Nano 4B</a> ／ <a href="https://ollama.com/library/nemotron-3.5-lightning">Nemotron3.5 Lightning</a><small>小型とMoEの区別、総量と稼働量。</small></li>
+<li id="s8"><a href="https://ollama.com/library/qwen3.8">Ollama：Qwen3.8</a><small>27Bモデルの配布容量。</small></li>
+<li id="s9"><a href="https://github.com/ollama/ollama/blob/main/docs/context-length.mdx">Ollama公式：Context length</a><small>長いコンテキストのメモリ消費と、ollama psによる確認。</small></li>
+<li id="s10"><a href="https://ollama.com/library/qwen3.5">Ollama：Qwen3.5</a><small>0.8B〜大型までのタグ・容量。配布版の容量と必要RAMは区別。</small></li>
+<li id="s11"><a href="https://zenn.dev/ut_notes/articles/60e63974361a42">ut_notes：GPUなし16GBノートでの小型モデル検証</a><small>2026/6/15公開。Core i5-1145G7、RAM16GB、CPU推論。架空資料による個人観察で、本番導入実績・統計的ベンチマークではない。</small></li>
+<li id="s12"><a href="https://github.com/Chandanrohit/local_LLM_workspace">Chandanrohit：local_LLM_workspace</a><small>Ryzen7 7735HS、RAM16GB、CPU推論、Qwen3.5 4B。短いコード課題と要約の本人記録。所要時間と誤答の報告を参照。</small></li>
+<li id="s13"><a href="https://ollama.com/library/gemma4:e2b-it-qat">Ollama：Gemma4 E2B IT QAT</a><small>小さい比較候補の配布容量。</small></li>
+<li id="s14"><a href="https://code.visualstudio.com/docs/agent-customization/language-models">VS Code公式：AI language models</a><small>BYOK・ローカルモデル・オフライン利用、対応しないCopilot機能。</small></li>
+<li id="s15"><a href="https://docs.ollama.com/capabilities/structured-outputs">Ollama公式：Structured Outputs</a><small>JSONスキーマによる出力形式の制約。内容の正しさは業務データで別途確認。</small></li>
+<li id="s16"><a href="https://docs.ollama.com/api/chat">Ollama公式：Chat API</a><small>自作スクリプトからのローカル推論呼出しと出力形式の指定。</small></li>
+<li id="s17"><a href="https://docs.ollama.com/faq">Ollama公式：FAQ</a><small>ローカルでの処理、クラウド機能の無効化、ネットワークに関する説明。</small></li></ol></section>
+</main><footer class="footer"><div class="wrap">LOCAL LLM / ENGINEERING GUIDE · 2026-10-04 第4版：一般的な開発作業6件へ具体例を改訂<br>単一HTML・外部フォント／画像／スクリプトなし。保存後は本文をオフライン閲覧できる。出典リンクの閲覧にはネット接続が必要。</div></footer>
+</body></html>
+
+
